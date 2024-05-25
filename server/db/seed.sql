@@ -1,34 +1,33 @@
 -- Connect to the database
-\c employees
+\c randomizer_db
 
-INSERT INTO department
-    (name)
+INSERT INTO wheel
+    (title)
 VALUES
-    ('Sales'),
-    ('Engineering'),
-    ('Finance'),
-    ('Legal');
+    ('rant wheel'),
+    ('rave wheel'),
+    ('wheel of time'),
+    ('wagon wheel');
 
-INSERT INTO role
-    (title, salary, department_id)
+INSERT INTO wheel_values
+    (value, wheel_id)
 VALUES
-    ('Sales Lead', 100000, 1),
-    ('Salesperson', 80000, 1),
-    ('Lead Engineer', 150000, 2),
-    ('Software Engineer', 120000, 2),
-    ('Account Manager', 160000, 3),
-    ('Accountant', 125000, 3),
-    ('Legal Team Lead', 250000, 4),
-    ('Lawyer', 190000, 4);
+    ('airplane food', 1),
+    ('cars', 1),
+    ('dogs', 2),
+    ('beetles', 2),
+    ('too many books', 3),
+    ('should only be 12', 3),
+    ('rock me', 4),
+    ('mama', 4);
 
-INSERT INTO employee
-    (first_name, last_name, role_id, manager_id)
+INSERT INTO wheel_colors
+    (color, wheel_id)
 VALUES
-    ('John', 'Doe', 1, NULL),
-    ('Mike', 'Chan', 2, 1),
-    ('Ashley', 'Rodriguez', 3, NULL),
-    ('Kevin', 'Tupik', 4, 3),
-    ('Kunal', 'Singh', 5, NULL),
-    ('Malia', 'Brown', 6, 5),
-    ('Sarah', 'Lourd', 7, NULL),
-    ('Tom', 'Allen', 8, 7);
+    ('red', 1),
+    ('blue', 1),
+    ('yellow', 2),
+    ('black', 2),
+    ('black', 3),
+    ('black', 4);
+   

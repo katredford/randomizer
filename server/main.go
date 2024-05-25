@@ -11,9 +11,10 @@ import (
 
 )
 
-type Department struct {
+type Wheel struct {
     ID   int    `json:"id"`
-    Name string `json:"name"`
+    Title string `json:"title"`
+    
 }
 
 
@@ -40,7 +41,7 @@ func ProcessForm(c fiber.Ctx) error {
 func main() {
 
 	// psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-       psqlconn := "postgresql://@localhost:5432/employees?sslmode=disable"  
+       psqlconn := "postgresql://@localhost:5432/randomizer_db?sslmode=disable"  
         // open database
     db, err := sql.Open("postgres", psqlconn)
     CheckError(err)
@@ -92,33 +93,33 @@ func indexHandler(c fiber.Ctx, db *sql.DB) error {
     // var name string
     // var depts []fiber.Map
 
-    rows, err := db.Query("SELECT id, name FROM department")
+    rows, err := db.Query("SELECT id, title FROM wheel")
     if err != nil {
         fmt.Println(err)
         return c.JSON("An error occurred")
     }
     defer rows.Close()
     
-    var departments []Department
+    var wheels []Wheel
     for rows.Next() {
-        var dept Department
+        var wheel Wheel
 
-        if err := rows.Scan(&dept.ID, &dept.Name); err != nil {
+        if err := rows.Scan(&wheel.ID, &wheel.Title); err != nil {
             fmt.Println(err)
             return c.JSON("An error occurred")
         }
-       departments = append(departments, dept)
+        wheels  = append(wheels , wheel)
     }
 
 
 
-	    for _, dept := range departments {
-        fmt.Println(dept)
+	    for _, wheel := range wheels  {
+        fmt.Println(wheel)
     }
 
     // Return departments as JSON
     // return c.Render("form", fiber.Map{
     //     "Depts": depts,
     // })
-    return c.JSON(departments)
+    return c.JSON(wheels )
 }

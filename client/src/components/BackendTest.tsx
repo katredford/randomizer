@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-interface Department {
+interface Wheel {
     id: number;
-    name: string;
+    title: string;
 }
 
 const BackendTest: React.FC = () => {
-    const [departments, setDepartments] = useState<Department[]>([]);
+    const [wheels, setwheels] = useState<Wheel[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        axios.get<Department[]>('/api/data')
+        axios.get<Wheel[]>('/api/data')
             .then(response => {
                 console.log(response)
-                setDepartments(response.data);
+                setwheels(response.data);
                 setLoading(false);
             })
             .catch(error => {
@@ -29,10 +29,10 @@ const BackendTest: React.FC = () => {
 
     return (
         <div>
-            <h1>Departments</h1>
+            <h1>wheel titles</h1>
             <ul>
-                {departments.map(dept => (
-                    <li key={dept.id}>{dept.name}</li>
+                {wheels.map(dept => (
+                    <li key={dept.id}>{dept.title}</li>
                 ))}
             </ul>
         </div>
