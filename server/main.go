@@ -11,13 +11,11 @@ import (
 
 )
 
-// const (
-//     host     = "localhost"
-//     port     = 5432
-//     user     = "postgres"
-//     password = ""
-//     dbname   = "employees"
-// )
+type Department struct {
+    ID   int    `json:"id"`
+    Name string `json:"name"`
+}
+
 
 // //RenderForm renders html form
 func RenderForm(c fiber.Ctx) error {
@@ -81,7 +79,7 @@ func main() {
 	app.Post("/submit", ProcessForm)
 
 
-	app.Get("/data", func(c fiber.Ctx) error {
+	app.Get("/api/data", func(c fiber.Ctx) error {
 		return indexHandler(c, db)
 	})
 
@@ -90,9 +88,9 @@ func main() {
 }
 
 func indexHandler(c fiber.Ctx, db *sql.DB) error {
-    var id int
-    var name string
-    var depts []fiber.Map
+    // var id int
+    // var name string
+    // var depts []fiber.Map
 
     rows, err := db.Query("SELECT id, name FROM department")
     if err != nil {
@@ -101,22 +99,26 @@ func indexHandler(c fiber.Ctx, db *sql.DB) error {
     }
     defer rows.Close()
     
+    var departments []Department
     for rows.Next() {
-        if err := rows.Scan(&id, &name); err != nil {
+        var dept Department
+
+        if err := rows.Scan(&dept.ID, &dept.Name); err != nil {
             fmt.Println(err)
             return c.JSON("An error occurred")
         }
-        depts = append(depts, fiber.Map{"id": id, "name": name})
+       departments = append(departments, dept)
     }
 
 
 
-	    for _, dept := range depts {
+	    for _, dept := range departments {
         fmt.Println(dept)
     }
 
     // Return departments as JSON
-    return c.Render("form", fiber.Map{
-        "Depts": depts,
-    })
+    // return c.Render("form", fiber.Map{
+    //     "Depts": depts,
+    // })
+    return c.JSON(departments)
 }
