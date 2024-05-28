@@ -7,7 +7,9 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/gofiber/fiber/v3"
 	
-	"github.com/gofiber/template/html/v2"
+	// "github.com/gofiber/template/html/v2"
+    // "github.com/joho/godotenv"
+    "connection"
 
 )
 
@@ -18,12 +20,9 @@ type Wheel struct {
 }
 
 
-// //RenderForm renders html form
-func RenderForm(c fiber.Ctx) error {
-	return c.Render("form", fiber.Map{})
-}
 
-// //ProcessForm process the form submission
+
+
 
 
 func CheckError(err error) {
@@ -32,54 +31,23 @@ func CheckError(err error) {
     }
 }
 
-func ProcessForm(c fiber.Ctx) error {
-	name := c.FormValue("name")
-	greeting := fmt.Sprintf("Hello, %s!", name)
-	return c.Render("greeting", fiber.Map{"Greeting": greeting})
-}
 
 func main() {
-
-	// psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-       psqlconn := "postgresql://@localhost:5432/randomizer_db?sslmode=disable"  
-        // open database
-    db, err := sql.Open("postgres", psqlconn)
-    CheckError(err)
-     
-        // close database
-    defer db.Close()
- 
-        // check db
-    err = db.Ping()
-    CheckError(err)
- 
-    fmt.Println("Connected!")
+ db, err := connection.Hello()
+ CheckError(err)
+ defer db.Close()
 
  
 
 
 	app := fiber.New(fiber.Config {
-		Views: html.New("./views", ".html"),
-	//   // Initialize standard Go html template engine
-	//   engine := html.New("./views", ".html")
-	//   // If you want other engine, just replace with following
-	//   // Create a new engine with django
-	//   // engine := django.New("./views", ".django")
-  
-	//   app := fiber.New(fiber.Config{
-	// 	  Views: engine,
+		
 	})
 
 	// Serve static files (HTML templates and stylesheets).
 	app.Static("/", "./static")
 
 	// Define routes
-	app.Get("/", RenderForm)
-
-	
-	app.Post("/submit", ProcessForm)
-
-
 	app.Get("/api/data", func(c fiber.Ctx) error {
 		return indexHandler(c, db)
 	})
