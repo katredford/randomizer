@@ -8,6 +8,11 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+type Wheel struct {
+    ID   int    `json:"id"`
+    Title string `json:"title"`
+    
+}
 
 func indexHandler(c fiber.Ctx, db *sql.DB) error {
     // var id int

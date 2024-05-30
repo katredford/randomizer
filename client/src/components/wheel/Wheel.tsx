@@ -36,7 +36,9 @@ const Wheel: FC = () => {
 
     return (
         //svg with dynamic values for width and height
-        <svg width={2 * radius} height={2 * radius}>
+        <svg 
+        //  viewBox="4000 100 100 100"
+        width={2 * radius} height={2 * radius}>
             {/* map over slices array to creat each section of the pie */}
             {slices.map((slice, i) => {
                 console.log(slice); // Log the path data to the console

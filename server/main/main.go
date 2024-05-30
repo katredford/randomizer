@@ -33,8 +33,11 @@ func CheckError(err error) {
 
 
 func main() {
- db, err := connection.Hello()
+
+//connect to database
+ db, err := connection.RandomizerDb()
  CheckError(err)
+ //close database
  defer db.Close()
 
  
