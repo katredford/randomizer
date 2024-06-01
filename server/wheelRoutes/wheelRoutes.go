@@ -14,6 +14,12 @@ type Wheel struct {
 	Title string `json:"title"`
 }
 
+type WheelValue struct {
+	ID    int    `json:"id"`
+	Value string `json:"value"`
+    Wheel_Id int `json:"wheel_id"`
+}
+
 //http request
 // c is context from the fiber framework
 // db is of type *sql.DB a pointer to an SQL database connection
@@ -57,6 +63,46 @@ func GetWheel( c fiber.Ctx,db *sql.DB) error {
 	return c.JSON(wheels)
 }
 
-// func AddWheel(c fiber.Ctx, db *sql.DB) error {
-//     rows, err := db.Query("INSERT INTO wheel (title) VALUES ($1)")
-// }
+func AddWheel(c fiber.Ctx, db *sql.DB) error {
+    req := new(Wheel)
+   
+    if err := c.Bind().Body(req); err != nil {
+        return err
+    }
+    fmt.Println(req)
+   
+    // return c.JSON(req)
+    createWheel, err := db.Query("INSERT INTO wheel (title) VALUES ($1)",req.Title)
+    if err != nil {
+		return c.JSON("An error occurred")
+	}
+
+    fmt.Println(createWheel)
+    
+	return c.JSON( createWheel)
+}
+
+
+
+func AddValues(c fiber.Ctx, db *sql.DB) error {
+   
+    req :=new(WheelValue)
+    if err := c.Bind().Body(req); err != nil {
+        return err
+    }
+    
+    wheel_id := c.Params("id")
+
+    // fmt.Println("BEEP BOOP", wheel_id)
+ 
+     createWheelValues, err := db.Query("INSERT INTO wheel_values (value, wheel_id) VALUES ($1, $2)", req.Value, wheel_id)
+
+     if err != nil {
+		return c.JSON("An error occurred")
+	}
+
+   
+    
+	return c.JSON( createWheelValues)
+}
+

@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+    // "fmt"
 	"github.com/gofiber/fiber/v3"
 	_ "github.com/lib/pq"
 
@@ -15,7 +15,12 @@ func CheckError(err error) {
 	}
 }
 
-func main() {
+
+
+
+  
+  func main() {
+     
 
 	//connect to database
 	db, err := connection.RandomizerDb()
@@ -30,21 +35,16 @@ func main() {
 		return api.GetWheel(c, db)
 	})
 
-    app.Post("/api/data", func(c fiber.Ctx) error {
-       
-        type Wheel struct {
-            // ID    int    `json:"id"`
-            Title string `json:"title"`
-        }
 
-         req := new(Wheel)
-        if err := c.Bind().Body(req); err != nil {
-            return err
-        }
-        fmt.Println(req)
-       
-        return c.JSON(req)
+
+
+    app.Post("/api/data", func(c fiber.Ctx) error {
+       return api.AddWheel(c, db)
       })
+
+      app.Post("/api/wheelVal/:id", func(c fiber.Ctx) error {
+        return api.AddValues(c, db)
+       })
 
 	// Start the Fiber app on port 8080.
 	app.Listen(":8080")
