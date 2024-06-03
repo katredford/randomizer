@@ -30,6 +30,10 @@ func main() {
 		return api.GetWheel(c, db)
 	})
 
+	app.Get("/api/data/:id", func(c fiber.Ctx) error {
+		return api.GetWheel(c, db)
+	})
+
 	app.Post("/api/data", func(c fiber.Ctx) error {
 		return api.AddWheel(c, db)
 	})

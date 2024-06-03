@@ -21,13 +21,25 @@ VALUES
     ('rock me', 4),
     ('mama', 4);
 
-INSERT INTO wheel_colors
-    (color, wheel_id)
-VALUES
-    ('red', 1),
-    ('blue', 1),
-    ('yellow', 2),
-    ('black', 2),
-    ('black', 3),
-    ('black', 4);
+-- INSERT INTO wheel_colors
+--     (color, wheel_id)
+-- VALUES
+--     ('red', 1),
+--     ('blue', 1),
+--     ('yellow', 2),
+--     ('black', 2),
+--     ('black', 3),
+--     ('black', 4);
+
+-- INSERT INTO complete_wheel (wheel_id, value_id) VALUES
+-- (1, 1), 
+-- (1, 2), 
+-- (2, 2), 
+-- (2, 3);
+
+-- INSERT INTO complete_wheel (wheel_id, value_id, color_id) VALUES
+-- (1, 1, 1), 
+-- (1, 2, 2), 
+-- (2, 2, 3), 
+-- (2, 3, 4);
    
