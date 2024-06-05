@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"strings"
+	"strconv"
 )
 
 // defines Wheel type
@@ -227,7 +228,7 @@ func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 	splitBody := strings.Split(bodyString, "\"")
 	fmt.Println("this thing working?", splitBody[3])
 
-	wheel_id := c.Params("id")
+	wheel_id := c.Params("wheelId")
 
 	rows, err := db.Query("SELECT id, wheel_id, value FROM wheel_values WHERE wheel_id = $1", wheel_id)
 	if err != nil {
@@ -235,10 +236,17 @@ func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 	}
 	defer rows.Close()
 
+	paramValId := c.Params("valId")
+	
+	number, err := strconv.ParseUint(paramValId, 10, 32)
+	value_id := int(number)
+	
 	// Loop over the query results
 	for rows.Next() {
 		var wv WheelValue
-		value_id := 2
+
+
+		
 		err := rows.Scan(&wv.ID, &wv.WheelID, &wv.Value)
 		if err != nil {
 			log.Fatal(err)
