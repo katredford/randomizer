@@ -34,6 +34,14 @@ func main() {
 		return api.GetWheel(c, db)
 	})
 
+	app.Post("/api/data/update/:id", func(c fiber.Ctx) error {
+		return api.UpdateWheelValue(c, db)
+	})
+	
+	app.Post("/api/data/updateVal/:id", func(c fiber.Ctx) error {
+		return api.UpdateWheelValue(c, db)
+	})
+
 	app.Post("/api/data", func(c fiber.Ctx) error {
 		return api.AddWheel(c, db)
 	})
