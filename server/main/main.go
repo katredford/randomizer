@@ -27,7 +27,7 @@ func main() {
 
 	// Define routes
 	app.Get("/api/data", func(c fiber.Ctx) error {
-		return api.GetWheel(c, db)
+		return api.AllWheels(c, db)
 	})
 
 	app.Get("/api/data/:id", func(c fiber.Ctx) error {

@@ -36,6 +36,44 @@ type WheelColor struct {
 
 
 
+
+func AllWheels(c fiber.Ctx, db *sql.DB) error {
+	query := `SELECT id, title, created_at, updated_at FROM wheel`
+
+		// Execute the query
+		rows, err := db.Query(query)
+		if err != nil {
+			fmt.Println(err)
+			return c.JSON(fiber.Map{"error": "An error occurred"})
+		}
+		defer rows.Close()
+
+		// Slice to hold all wheels
+		var wheels []Wheel
+
+		// Iterate over the query results
+		for rows.Next() {
+			var wheel Wheel
+
+			// Scan the row into the Wheel struct
+			if err := rows.Scan(&wheel.ID, &wheel.Title, &wheel.CreatedAt, &wheel.UpdatedAt); err != nil {
+				fmt.Println(err)
+				return c.JSON(fiber.Map{"error": "An error occurred"})
+			}
+
+			// Append the wheel to the wheels slice
+			wheels = append(wheels, wheel)
+		}
+
+		// Check for errors after the loop
+		if err = rows.Err(); err != nil {
+			fmt.Println(err)
+			return c.JSON(fiber.Map{"error": "An error occurred"})
+		}
+
+		// Return the wheels as JSON
+		return c.JSON(wheels)
+}
 // http request
 // c is context from the fiber framework
 // db is of type *sql.DB a pointer to an SQL database connection
@@ -102,9 +140,9 @@ func GetWheel(c fiber.Ctx, db *sql.DB) error {
 	//assigns the collected wheelValues slice to the Values field of the wheel struct
 	wheel.Values = wheelValues
 	//this loops over the wheels slice and prints out the results
-	// for _, wheel := range wheel.Values {
-	// 	fmt.Println(wheel)
-	// }
+	for _, wheel := range wheel.Values {
+		fmt.Println(wheel)
+	}
 
 	//returns wheels struct as JSON
 	return c.JSON(&wheel)
@@ -116,10 +154,6 @@ func AddWheel(c fiber.Ctx, db *sql.DB) error {
 	if err := c.Bind().Body(req); err != nil {
 		return err
 	}
-
-	// body := c.Body()
-	// bodyString := string(body)
-	// fmt.Println("this thing working?", bodyString)
 
 	createWheel, err := db.Query("INSERT INTO wheel (title) VALUES ($1)", req.Title)
 	if err != nil {
