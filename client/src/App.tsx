@@ -3,6 +3,7 @@ import Wheel from "./components/wheel/Wheel"
 import WheelForm from './components/wheel_page/WheelForm'
 import BackendTest from "./components/BackendTest"
 import './App.css'
+import AllWheels from "./components/wheel/AllWheels"
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
     <>
     {/* <Wheel /> */}
     {/* <BackendTest /> */}
+    <AllWheels />
     <WheelForm />
     </>
   )
