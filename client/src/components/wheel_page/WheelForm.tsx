@@ -16,11 +16,11 @@ const WheelForm: React.FC = () => {
         axios.post<string>('/api/data', {
             title: inputValue
         })
-        // .then(response => {
-        //     console.log(response)
-        //     // setwheels(response.data);
-        //     // setLoading(false);
-        // })
+        .then(response => {
+            console.log(response)
+            // setwheels(response.data);
+            // setLoading(false);
+        })
         .catch(error => {
             console.error('There was an error adding the wheel title!', error);
             

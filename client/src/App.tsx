@@ -11,12 +11,6 @@ function App() {
 
   return (
     <>
-    {/* <Wheel /> */}
-    {/* <BackendTest /> */}
-    {/* <AllWheels /> */}
-    {/* <WheelForm /> */}
-
- 
     <Outlet />
      </>
   )
