@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import App from './App'
 import './index.css'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import AllWheels from './components/wheel/AllWheels.tsx';
-import Error from './components/Error.tsx';
-import WheelControl from "./components/wheel_page/WheelControl.tsx"
+import AllWheels from './components/wheel/AllWheels';
+import Error from './components/Error';
+import WheelControl from "./components/wheel_page/WheelControl"
 
 const router = createBrowserRouter([
   {
@@ -23,6 +23,7 @@ const router = createBrowserRouter([
         path: '/Wheel/:id',
         element: <WheelControl />,
       },
+     
     
     ],
   },
