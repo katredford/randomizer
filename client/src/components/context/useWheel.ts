@@ -7,7 +7,7 @@ import { WheelContext} from "./WheelContext"
 export const useWheel = () => {
     const context = useContext(WheelContext);
     if (context === undefined) {
-        throw new Error('useWheel must be used within WheelProvider');
+        throw new Error('something went wrong with useWheel.ts');
     }
     return context;
 };

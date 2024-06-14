@@ -23,13 +23,13 @@ export const WheelContext = createContext<Wheel | undefined>(undefined);
 // Create a provider component
 export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
-    const { id } = useParams<{ id: string }>();
+    // const { id } = useParams<{ id: string }>();
    
     const [wheel, setWheel] = useState<Wheel | undefined>(undefined);
 
     useEffect(() => {
-        if (id) {
-            axios.get<Wheel>(`/api/data/${id}`)
+        // if (id) {
+            axios.get<Wheel>(`/api/data/`)
           
                 .then(response => {
                     setWheel(response.data);
@@ -37,9 +37,9 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 .catch(error => {
                     console.error('There was an error fetching the wheel data!', error);
                 });
-        }
-        }, [id]);
-        // }, []);
+        // }
+        // }, [id]);
+        }, []);
         useEffect(() => {
             console.log("WHEEL WHEEL", wheel);
         }, [wheel]);
