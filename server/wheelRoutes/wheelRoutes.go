@@ -81,7 +81,7 @@ func GetWheel(c fiber.Ctx, db *sql.DB) error {
 
 	// get wheel id from the URL path
 	paramWheelID := c.Params("id")
-
+fmt.Println("param param param", paramWheelID)
 	//query selects columns from the wheel and wheel_values tables,
 	// joining them on w.id = v.wheel_id.
 	query := `
@@ -93,13 +93,15 @@ func GetWheel(c fiber.Ctx, db *sql.DB) error {
 
     `
 
+	// query := `select * from wheel where id = 7;`
+
 	//a variable set to the results of the db query that runs
 	//the query and takes in paramwheelid to use in the placeholder in the query
 	rows, err := db.Query(query, paramWheelID)
 
 	// if an error occurs  it is printed as a json response
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Query Error:",err)
 		return c.JSON("An error occurred")
 	}
 	//rows are closed to release any resources held by query result
@@ -120,7 +122,7 @@ func GetWheel(c fiber.Ctx, db *sql.DB) error {
 		var valueWheelID int
 		//reports erros that occur during scanning
 		if err := rows.Scan(&wheelID, &title, &createdAt, &updatedAt, &valueID, &value, &valueWheelID); err != nil {
-			fmt.Println(err)
+			fmt.Println("Scan Error:", err)
 			return c.JSON("An error occurred")
 		}
 		//Sets the Wheel struct fields with the scanned data
