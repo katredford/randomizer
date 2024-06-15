@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// WheelProvider.tsx
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-// Define the interfaces
 interface Value {
     id: number;
     value: string;
@@ -17,45 +17,86 @@ interface Wheel {
     Values: Value[];
 }
 
-// Create the context with a default undefined value
-export const WheelContext = createContext<Wheel | undefined>(undefined);
 
-// Create a provider component
+//hold an array of wheels so we can manage and update multiple
+interface WheelContextType {
+    wheels: Wheel[];
+    loading: boolean;
+    oneWheel: Wheel | null;
+    getOneWheel: (id: number) => void
+    addWheel: (input: string) => void
+}
+
+export const WheelContext = createContext<WheelContextType>({
+    wheels: [],
+    loading: true,
+    oneWheel: null,
+    getOneWheel: () => {},
+    addWheel: () => {}
+});
+
+
 export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [wheels, setWheels] = useState<Wheel[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [oneWheel, setOneWheel] = useState<Wheel | null>(null);
+    
+    function getAllWheels() {
+    
+        axios.get<Wheel[]>('/api/data/')
+            .then(response => {
+                setWheels(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the wheels data!', error);
+                setLoading(false);
+            });
+    }
 
-    const { id } = useParams<{ id: string }>();
-   
-    const [wheel, setWheel] = useState<Wheel | undefined>(undefined);
+    function getOneWheel(id: Number) {
+        setLoading(true);
+        axios.get<Wheel>(`/api/data/${id}`)
+            .then(response => {
+                setOneWheel(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the specific wheel data!', error);
+                setLoading(false);
+            });
+    }
+
+    function addWheel(inputValue: string) {
+        axios.post<Wheel>('/api/data', {
+            title: inputValue,
+        })
+            .then(response => {
+                setWheels(prevWheels => [...prevWheels, response.data]);
+            })
+            .catch(error => {
+                console.error('There was an error adding the wheel title!', error);
+            });
+    }
+
 
     useEffect(() => {
-        if (id) {
-            axios.get<Wheel>(`/api/data/${id}`)
-          
-                .then(response => {
-                    setWheel(response.data);
-                })
-                .catch(error => {
-                    console.error('There was an error fetching the wheel data!', error);
-                });
-        }
-        }, [id]);
-        // }, []);
-        useEffect(() => {
-            console.log("WHEEL WHEEL", wheel);
-        }, [wheel]);
-    
-        const value = wheel || { 
-            id: 0, 
-            title: '', 
-            createdAt: '', 
-            updatedAt: '', 
-            Values: [] 
-        };
-        return (
-            <WheelContext.Provider value={value}>
-                {children}
-            </WheelContext.Provider>
-        );
+        getAllWheels()
+     
+    }, []);
+  
+
+    const values = {
+        wheels, 
+        oneWheel, 
+        loading, 
+        getOneWheel,
+        addWheel
+    }
+
+    return (
+        <WheelContext.Provider value={values}>
+            {children}
+        </WheelContext.Provider>
+    );
 };
-
-

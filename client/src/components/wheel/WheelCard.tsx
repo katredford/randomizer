@@ -14,7 +14,7 @@ const WheelCard: React.FC<Wheel> = (props) => {
  
     return (
         <>
-        <Link to={`/Wheel/${props.id}`}>
+        <Link to={`/wheel/${props.id}`}>
         <div  key={props.id}> 
             what up?
           {/* {wheels.id} */}
