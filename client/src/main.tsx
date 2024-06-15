@@ -7,7 +7,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import AllWheels from './components/wheel/AllWheels';
 import Error from './components/Error';
-import WheelControl from "./components/wheel_page/WheelControl"
+import WheelControl from './components/wheel_page/WheelControl'
 
 const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
         element: <AllWheels/>,
       },
       {
-        path: '/Wheel/:id',
+        path: '/wheel/:id',
         element: <WheelControl />,
       },
      

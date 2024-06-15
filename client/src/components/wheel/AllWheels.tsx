@@ -1,29 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// AllWheels.tsx
+import React, { useEffect, useState, useContext } from 'react';
 import WheelCard from './WheelCard';
-
-interface Wheel {
-    id: number;
-    title: string;
-    updatedAt: string;
-}
+import { WheelContext } from '../context/WheelContext';
 
 const AllWheels: React.FC = () => {
-    const [wheels, setwheels] = useState<Wheel[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        axios.get<Wheel[]>('/api/data')
-            .then(response => {
-                console.log(response)
-                setwheels(response.data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the departments!', error);
-                setLoading(false);
-            });
-    }, []);
+    const { wheels, loading } = useContext(WheelContext);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -31,14 +12,12 @@ const AllWheels: React.FC = () => {
 
     return (
         <div>
-            <h1>wheel titles</h1>
+            <h1>Wheel Titles</h1>
             <ul>
                 {wheels.map(wheel => (
-                    // <li key={dept.id}>{dept.title}</li>
-                    <WheelCard {...wheel}/>
+                    <WheelCard key={wheel.id} {...wheel} />
                 ))}
             </ul>
-
         </div>
     );
 };
