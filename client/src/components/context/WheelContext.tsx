@@ -25,6 +25,7 @@ interface WheelContextType {
     oneWheel: Wheel | null;
     getOneWheel: (id: number) => void
     addWheel: (input: string) => void
+    addValue: (wheel_id: number, value: string) => void
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -32,7 +33,8 @@ export const WheelContext = createContext<WheelContextType>({
     loading: true,
     oneWheel: null,
     getOneWheel: () => {},
-    addWheel: () => {}
+    addWheel: () => {},
+    addValue: () => {}
 });
 
 
@@ -79,6 +81,28 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             });
     }
 
+    const addValue = (wheel_id: number, value: string) => {
+        axios.post<Value>(`/api/wheelVal/${wheel_id}`, {
+            value: value,
+        })
+        .then(response => {
+            setWheels(prevWheels => 
+                prevWheels.map(wheel => 
+                    wheel.id === wheel_id? { ...wheel, Values: [...wheel.Values, response.data] } : wheel
+                )
+            );
+            if (oneWheel && oneWheel.id === wheel_id) {
+                setOneWheel({
+                    ...oneWheel,
+                    Values: [...oneWheel.Values, response.data]
+                });
+            }
+        })
+        .catch(error => {
+            console.error('There was an error adding the value to the wheel!', error);
+        });
+    }
+
 
     useEffect(() => {
         getAllWheels()
@@ -91,7 +115,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         oneWheel, 
         loading, 
         getOneWheel,
-        addWheel
+        addWheel,
+        addValue
     }
 
     return (
