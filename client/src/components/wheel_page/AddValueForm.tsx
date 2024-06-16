@@ -1,8 +1,16 @@
 import { useState, useContext } from 'react';
-import { WheelContext } from '../context/WheelContext'
+import {useWheel } from '../context/useWheel'
 
-const AddValueForm: React.FC<{wheel_id: number }> = ( {wheel_id}) => {
-    const { addValue } = useContext(WheelContext);
+interface AddValueFormProps {
+    wheel_id: number;
+    // onValueadded: It is called within handleSubmit after a new value has 
+    // been successfully added to the wheel. The primary purpose of this callback
+    // is to allow the parent component to react to the addition of a new value
+    onValueAdded: () => void; // new prop for callback
+}
+
+const AddValueForm: React.FC<AddValueFormProps> = ( {wheel_id, onValueAdded}) => {
+    const { addValue, getOneWheel } = useWheel();
     const [inputValue, setInputValue] = useState<string>('')
 
 
@@ -15,6 +23,7 @@ const AddValueForm: React.FC<{wheel_id: number }> = ( {wheel_id}) => {
     
         if(inputValue) {
             addValue(wheel_id, inputValue)
+            onValueAdded()
             setInputValue('')
         }
     }
