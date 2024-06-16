@@ -5,7 +5,7 @@ import { WheelContext } from '../context/WheelContext';
 import ValuesControl from './ValuesControl';
 
 const WheelControl: React.FC = () => {
-    const {id} =useParams<{ id: string}> ();
+    const {id} = useParams<{ id: string}> ();
     const {oneWheel, loading, getOneWheel} = useContext(WheelContext)
 
     useEffect(() => {
@@ -18,16 +18,17 @@ const WheelControl: React.FC = () => {
     }
 
     if(!oneWheel) {
-        return <div>Wheel not fount</div>
+        return <div>Wheel not found</div>
     }
 
     return(
         <>
             WheelControl
-//             {/* display the data from the database */}
-//             <h1>{oneWheel?.title}</h1>
-//             {/* pass the wheel values to the ValuesControl component */}
-//             <ValuesControl wheel={oneWheel} />
+            {/* display the data from the database */}
+            <h1>{oneWheel?.title}</h1>
+          {/* pass the wheel values to the ValuesControl component */}
+            {Array.isArray(oneWheel?.Values) && oneWheel.Values.length > 0 && <ValuesControl wheel={oneWheel} />}
+           
         </>
     )
 }
