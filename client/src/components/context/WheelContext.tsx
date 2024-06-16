@@ -1,7 +1,7 @@
 // WheelProvider.tsx
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 interface Value {
     id: number;
@@ -25,6 +25,7 @@ interface WheelContextType {
     oneWheel: Wheel | null;
     getOneWheel: (id: number) => void
     addWheel: (input: string) => void
+    addValue: (wheel_id: number, value: string) => void
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -32,7 +33,8 @@ export const WheelContext = createContext<WheelContextType>({
     loading: true,
     oneWheel: null,
     getOneWheel: () => {},
-    addWheel: () => {}
+    addWheel: () => {},
+    addValue: () => {}
 });
 
 
@@ -41,49 +43,84 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [loading, setLoading] = useState<boolean>(true);
     const [oneWheel, setOneWheel] = useState<Wheel | null>(null);
     
-    function getAllWheels() {
-    
+
+    //useCallback is to memoize
+    // memoization is the process of caching the result of a function call and 
+    // returning the cached result when the same inputs occur again, rather than 
+    // recalculating the result
+    const getAllWheels = useCallback(() => {
         axios.get<Wheel[]>('/api/data/')
             .then(response => {
-                setWheels(response.data);
+                const wheelsWithValues = response.data.map(wheel => ({
+                    ...wheel,
+                    Values: wheel.Values || [],
+                }));
+                setWheels(wheelsWithValues);
                 setLoading(false);
             })
             .catch(error => {
                 console.error('There was an error fetching the wheels data!', error);
                 setLoading(false);
             });
-    }
+    }, []);
 
-    function getOneWheel(id: Number) {
+    const getOneWheel = useCallback((id: number) => {
         setLoading(true);
         axios.get<Wheel>(`/api/data/${id}`)
             .then(response => {
-                setOneWheel(response.data);
+                const wheelWithValues = {
+                    ...response.data,
+                    Values: response.data.Values || [],
+                };
+                setOneWheel(wheelWithValues);
                 setLoading(false);
             })
             .catch(error => {
                 console.error('There was an error fetching the specific wheel data!', error);
                 setLoading(false);
             });
-    }
+    }, []);
 
-    function addWheel(inputValue: string) {
+    const addWheel = useCallback((inputValue: string) => {
         axios.post<Wheel>('/api/data', {
             title: inputValue,
         })
             .then(response => {
-                setWheels(prevWheels => [...prevWheels, response.data]);
+                const newWheel = { ...response.data, Values: [] };
+                setWheels(prevWheels => [...prevWheels, newWheel]);
             })
             .catch(error => {
                 console.error('There was an error adding the wheel title!', error);
             });
-    }
+    }, []);
+
+      const addValue = useCallback((wheel_id: number, value: string) => {
+        axios.post<Value>(`/api/wheelVal/${wheel_id}`, {
+            value: value,
+        })
+            .then(response => {
+                setWheels(prevWheels =>
+                    prevWheels.map(wheel =>
+                        wheel.id === wheel_id ? { ...wheel, Values: [...wheel.Values, response.data] } : wheel
+                    )
+                );
+                if (oneWheel && oneWheel.id === wheel_id) {
+                    setOneWheel({
+                        ...oneWheel,
+                        Values: [...oneWheel.Values, response.data],
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('There was an error adding the value to the wheel!', error);
+            });
+    }, [oneWheel]);
 
 
     useEffect(() => {
-        getAllWheels()
-     
-    }, []);
+        getAllWheels();
+    }, [getAllWheels]);
+
   
 
     const values = {
@@ -91,7 +128,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         oneWheel, 
         loading, 
         getOneWheel,
-        addWheel
+        addWheel,
+        addValue
     }
 
     return (
