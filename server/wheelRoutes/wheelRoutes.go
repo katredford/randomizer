@@ -77,78 +77,84 @@ func AllWheels(c fiber.Ctx, db *sql.DB) error {
 // http request
 // c is context from the fiber framework
 // db is of type *sql.DB a pointer to an SQL database connection
+//Had to rewrite this query to be able to get one wheel even when the values array is empty
 func GetWheel(c fiber.Ctx, db *sql.DB) error {
+    // Get wheel id from the URL path
+    paramWheelID := c.Params("id")
+    fmt.Println("paramWheelID:", paramWheelID)
 
-	// get wheel id from the URL path
-	paramWheelID := c.Params("id")
-fmt.Println("param param param", paramWheelID)
-	//query selects columns from the wheel and wheel_values tables,
-	// joining them on w.id = v.wheel_id.
-	query := `
-  
-	SELECT w.*, v.*
-	FROM wheel w
-	JOIN wheel_values v ON w.id = v.wheel_id
-	WHERE w.id = $1;
-
+    // Query to get the wheel details
+    wheelQuery := `
+        SELECT id, title, created_at, updated_at
+        FROM wheel
+        WHERE id = $1;
     `
 
-	// query := `select * from wheel where id = 7;`
+    // Execute the wheel query
+    var wheel Wheel
+    err := db.QueryRow(wheelQuery, paramWheelID).Scan(&wheel.ID, &wheel.Title, &wheel.CreatedAt, &wheel.UpdatedAt)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            // No wheel found with the given ID
+            return c.JSON(fiber.Map{
+                "error": "Wheel not found",
+            })
+        }
+        fmt.Println("Query Error:", err)
+        return c.JSON("An error occurred")
+    }
 
-	//a variable set to the results of the db query that runs
-	//the query and takes in paramwheelid to use in the placeholder in the query
-	rows, err := db.Query(query, paramWheelID)
+    // Query to get the wheel values
+    valuesQuery := `
+        SELECT id, value, wheel_id
+        FROM wheel_values
+        WHERE wheel_id = $1;
+    `
 
-	// if an error occurs  it is printed as a json response
-	if err != nil {
-		fmt.Println("Query Error:",err)
-		return c.JSON("An error occurred")
-	}
-	//rows are closed to release any resources held by query result
-	defer rows.Close()
+    // Execute the values query
+    rows, err := db.Query(valuesQuery, paramWheelID)
+    if err != nil {
+        fmt.Println("Query Error:", err)
+        return c.JSON("An error occurred")
+    }
+    defer rows.Close()
 
-	//this is an empty "wheel" struct with an epmty wheelValue slice
-	var wheel Wheel
-	var wheelValues []WheelValue
+    // Initialize an empty wheelValue slice
+    var wheelValues []WheelValue
 
-	//iterate over rows, the result of the query
-	//.Next() method advances the *sql.Rows to the next row in the result set
-	for rows.Next() {
+    // Iterate over rows
+    for rows.Next() {
+        var valueID int
+        var value string
+        var valueWheelID int
 
-		var wheelID int
-		var title, createdAt, updatedAt string
-		var valueID int
-		var value string
-		var valueWheelID int
-		//reports erros that occur during scanning
-		if err := rows.Scan(&wheelID, &title, &createdAt, &updatedAt, &valueID, &value, &valueWheelID); err != nil {
-			fmt.Println("Scan Error:", err)
-			return c.JSON("An error occurred")
-		}
-		//Sets the Wheel struct fields with the scanned data
-		wheel.ID = wheelID
-		wheel.Title = title
-		wheel.CreatedAt = createdAt
-		wheel.UpdatedAt = updatedAt
+        if err := rows.Scan(&valueID, &value, &valueWheelID); err != nil {
+            fmt.Println("Scan Error:", err)
+            return c.JSON("An error occurred")
+        }
 
-		//Creates a WheelValue struct with the scanned value data and appends it to wheelValues
-		wheelValue := WheelValue{
-			ID:      valueID,
-			Value:   value,
-			WheelID: valueWheelID,
-		}
-		wheelValues = append(wheelValues, wheelValue)
-	}
-	//assigns the collected wheelValues slice to the Values field of the wheel struct
-	wheel.Values = wheelValues
-	//this loops over the wheels slice and prints out the results
-	for _, wheel := range wheel.Values {
-		fmt.Println(wheel)
-	}
+        // Append WheelValue to the slice
+        wheelValue := WheelValue{
+            ID:      valueID,
+            Value:   value,
+            WheelID: valueWheelID,
+        }
+        wheelValues = append(wheelValues, wheelValue)
+    }
 
-	//returns wheels struct as JSON
-	return c.JSON(&wheel)
+    // Assign the collected wheelValues slice to the Values field of the wheel struct
+    wheel.Values = wheelValues
+
+    // Debug print statements
+    fmt.Println("Wheel Struct:", wheel)
+    for _, wheelValue := range wheel.Values {
+        fmt.Println("Wheel Value:", wheelValue)
+    }
+
+    // Return wheel struct as JSON
+    return c.JSON(&wheel)
 }
+
 
 func AddWheel(c fiber.Ctx, db *sql.DB) error {
 	req := new(Wheel)
@@ -308,5 +314,7 @@ func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 
 	return c.JSON("values updated successfuly ")
 }
+
+
 
 
