@@ -27,6 +27,7 @@ interface WheelContextType {
     addWheel: (input: string) => void
     addValue: (wheel_id: number, value: string) => void
     updateValue: (wheel_id: number, value_id: number, value: string) => void
+    deleteValue: (value_id: number, value: string) => void
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -36,7 +37,8 @@ export const WheelContext = createContext<WheelContextType>({
     getOneWheel: () => {},
     addWheel: () => {},
     addValue: () => {},
-    updateValue: () => {}
+    updateValue: () => {},
+    deleteValue: () => {}
 });
 
 
@@ -119,7 +121,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const updateValue = useCallback(async (wheel_id: number, value_id: number, value: string) => {
         try {
-            await axios.post(`/api/data/updateVal/${wheel_id}/${value_id}`, { value }, {
+            await axios.put(`/api/data/updateVal/${wheel_id}/${value_id}`, { value }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             console.log(value)
@@ -127,6 +129,18 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             console.error("Error adding value:", error);
         }
     }, []);
+
+    // const deleteValue = useCallback(async (wheel_id: number, value_id: number, value: string) => {
+    //     try {
+    //         await axios.delete(`/api/data/updateVal/${wheel_id}/${value_id}`, { value }, {
+    //             headers: { 'Content-Type': 'application/json' },
+    //         });
+    //         console.log(value)
+    //     } catch (error) {
+    //         console.error("Error adding value:", error);
+    //     }
+    // }, []);
+
 
 
 
@@ -143,7 +157,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         getOneWheel,
         addWheel,
         addValue,
-        updateValue
+        updateValue,
+        // deleteValue
     }
 
     return (
