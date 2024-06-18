@@ -26,6 +26,7 @@ interface WheelContextType {
     getOneWheel: (id: number) => void
     addWheel: (input: string) => void
     addValue: (wheel_id: number, value: string) => void
+    updateValue: (wheel_id: number, value_id: number, value: string) => void
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -34,87 +35,99 @@ export const WheelContext = createContext<WheelContextType>({
     oneWheel: null,
     getOneWheel: () => {},
     addWheel: () => {},
-    addValue: () => {}
+    addValue: () => {},
+    updateValue: () => {}
 });
 
 
 export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [wheels, setWheels] = useState<Wheel[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [oneWheel, setOneWheel] = useState<Wheel | null>(null);
+    const [loading, setLoading] = useState(false);
     
 
     //useCallback is to memoize
     // memoization is the process of caching the result of a function call and 
     // returning the cached result when the same inputs occur again, rather than 
     // recalculating the result
-    const getAllWheels = useCallback(() => {
-        axios.get<Wheel[]>('/api/data/')
-            .then(response => {
-                const wheelsWithValues = response.data.map(wheel => ({
-                    ...wheel,
-                    Values: wheel.Values || [],
-                }));
-                setWheels(wheelsWithValues);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the wheels data!', error);
-                setLoading(false);
-            });
+    const getAllWheels = useCallback(async () => {
+        try {
+            const response = await axios.get<Wheel[]>('/api/data/');
+            const wheelsWithValues = response.data.map(wheel => ({
+                ...wheel,
+                Values: wheel.Values || [],
+            }));
+            setWheels(wheelsWithValues);
+        } catch (error) {
+            console.error('There was an error fetching the wheels data!', error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    const getOneWheel = useCallback((id: number) => {
+
+    //async means we can wait for the resolution of the promise with await
+    const getOneWheel = useCallback(async (id: number) => {
         setLoading(true);
-        axios.get<Wheel>(`/api/data/${id}`)
-            .then(response => {
-                const wheelWithValues = {
-                    ...response.data,
-                    Values: response.data.Values || [],
-                };
-                setOneWheel(wheelWithValues);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the specific wheel data!', error);
-                setLoading(false);
-            });
+        //try block will execute the code unless errors occur
+        try {
+            //axios is fetching the things at the api/data/:id endpoint
+            const response = await axios.get(`/api/data/${id}`);
+            //set the response from the axios to setOneWheel
+            setOneWheel(response.data);
+
+            //catch the errors
+        } catch (error) {
+            console.error("Error getting one wheel data:", error);
+
+            //finally block always executes regardless of whether or not there are errors
+        } finally {
+            //set loading state to false
+            setLoading(false);
+        }
     }, []);
 
-    const addWheel = useCallback((inputValue: string) => {
-        axios.post<Wheel>('/api/data', {
-            title: inputValue,
-        })
-            .then(response => {
-                const newWheel = { ...response.data, Values: [] };
-                setWheels(prevWheels => [...prevWheels, newWheel]);
-            })
-            .catch(error => {
-                console.error('There was an error adding the wheel title!', error);
+
+    const addWheel = useCallback(async (inputValue: string) =>{
+        try{
+            //await is used to wait for the request to complete and get the response object
+            const response = await axios.post<Wheel>('/api/data', {
+                title: inputValue,
             });
+
+            //creatges a new wheel object, and inicialises "Values" property as empty array
+            const newWheel = { ...response.data, Values: []};
+            setWheels(prevWheels => [ ...prevWheels, newWheel]);
+        } catch (error) {
+            console.error('there is an error adding the wheel title')
+        }
+        //the [] is the second argument of "useCallback" hook typically
+        // for when the functio doesn't rely on external state or props to execute
+    }, [])
+
+
+    const addValue = useCallback(async (wheel_id: number, value: string) => {
+        try {
+            await axios.post(`/api/wheelVal/${wheel_id}`, { value }, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            console.log(value)
+        } catch (error) {
+            console.error("Error adding value:", error);
+        }
     }, []);
 
-      const addValue = useCallback((wheel_id: number, value: string) => {
-        axios.post<Value>(`/api/wheelVal/${wheel_id}`, {
-            value: value,
-        })
-            .then(response => {
-                setWheels(prevWheels =>
-                    prevWheels.map(wheel =>
-                        wheel.id === wheel_id ? { ...wheel, Values: [...wheel.Values, response.data] } : wheel
-                    )
-                );
-                if (oneWheel && oneWheel.id === wheel_id) {
-                    setOneWheel({
-                        ...oneWheel,
-                        Values: [...oneWheel.Values, response.data],
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('There was an error adding the value to the wheel!', error);
+    const updateValue = useCallback(async (wheel_id: number, value_id: number, value: string) => {
+        try {
+            await axios.post(`/api/data/updateVal/${wheel_id}/${value_id}`, { value }, {
+                headers: { 'Content-Type': 'application/json' },
             });
-    }, [oneWheel]);
+            console.log(value)
+        } catch (error) {
+            console.error("Error adding value:", error);
+        }
+    }, []);
+
 
 
     useEffect(() => {
@@ -129,7 +142,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         loading, 
         getOneWheel,
         addWheel,
-        addValue
+        addValue,
+        updateValue
     }
 
     return (

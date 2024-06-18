@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import ValuesControl from './ValuesControl';
@@ -7,25 +6,15 @@ import AddValueForm from './AddValueForm';
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel } = useWheel();
-    const [added, setAdded] = useState(false); // state to track if a value has been added
+    const { oneWheel, loading, getOneWheel, updateValue } = useWheel(); // Destructure updateValue function from custom context
+    const [refresh, setRefresh] = useState(0); // State to force re-render
 
-    // get the wheel data initially
     useEffect(() => {
         getOneWheel(Number(id));
-    }, [id, getOneWheel]);
-
-
-    // get the wheel data when a value is added
-    useEffect(() => {
-        if (added) {
-            getOneWheel(Number(id));
-            setAdded(false); // Reset the added state
-        }
-    }, [added, id, getOneWheel]);
+    }, [id, getOneWheel, refresh]);
 
     const refreshWheelData = useCallback(() => {
-        setAdded(true); // set added to true to trigger refresh
+        setRefresh(prev => prev + 1);
     }, []);
 
     if (loading) {
@@ -39,9 +28,13 @@ const WheelControl: React.FC = () => {
     return (
         <>
             <h1>{oneWheel.title}</h1>
-            <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData}  />
+            <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData} />
             {oneWheel.Values && oneWheel.Values.length > 0 ? (
-                <ValuesControl wheel={oneWheel} />
+                 <ValuesControl
+                 wheel={oneWheel}
+                 onUpdateValue={updateValue}
+                 onValueChanged={refreshWheelData} // Ensure this prop is passed
+             />
             ) : (
                 <div>No values found for this wheel.</div>
             )}
@@ -50,6 +43,13 @@ const WheelControl: React.FC = () => {
 };
 
 export default WheelControl;
+
+
+
+
+
+
+
 
 
 

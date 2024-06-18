@@ -147,9 +147,9 @@ func GetWheel(c fiber.Ctx, db *sql.DB) error {
 
     // Debug print statements
     fmt.Println("Wheel Struct:", wheel)
-    for _, wheelValue := range wheel.Values {
-        fmt.Println("Wheel Value:", wheelValue)
-    }
+    // for _, wheelValue := range wheel.Values {
+    //     fmt.Println("Wheel Value:", wheelValue)
+    // }
 
     // Return wheel struct as JSON
     return c.JSON(&wheel)
