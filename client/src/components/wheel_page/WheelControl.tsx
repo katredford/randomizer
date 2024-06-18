@@ -1,37 +1,39 @@
-
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
 
 const WheelControl: React.FC = () => {
+    //get id value from url
     const { id } = useParams<{ id: string }>();
+    // destructure functions from custom context useWheel
     const { oneWheel, loading, getOneWheel } = useWheel();
-    const [added, setAdded] = useState(false); // state to track if a value has been added
+    //state to force re-render
+    const [refresh, setRefresh] = useState(0); // State to force re-render
 
-    // get the wheel data initially
+    // Fetch the wheel data whenever the component mounts or the id changes
     useEffect(() => {
+        
         getOneWheel(Number(id));
-    }, [id, getOneWheel]);
+    }, [id, getOneWheel, refresh]);
 
-
-    // get the wheel data when a value is added
-    useEffect(() => {
-        if (added) {
-            getOneWheel(Number(id));
-            setAdded(false); // Reset the added state
-        }
-    }, [added, id, getOneWheel]);
-
+    // Callback function to refresh the wheel data
     const refreshWheelData = useCallback(() => {
-        setAdded(true); // set added to true to trigger refresh
+        console.log("refreshWheelData called");
+        setRefresh(prev => prev + 1); // Force re-render by updating state
     }, []);
+
+    useEffect(() => {
+        // This useEffect is for additional side effects when oneWheel changes
+        
+    }, [oneWheel]);
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
+    //when no wheel is found
     if (!oneWheel) {
         return <div>Wheel not found</div>;
     }
@@ -39,7 +41,7 @@ const WheelControl: React.FC = () => {
     return (
         <>
             <h1>{oneWheel.title}</h1>
-            <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData}  />
+            <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData} />
             {oneWheel.Values && oneWheel.Values.length > 0 ? (
                 <ValuesControl wheel={oneWheel} />
             ) : (
@@ -50,6 +52,10 @@ const WheelControl: React.FC = () => {
 };
 
 export default WheelControl;
+
+
+
+
 
 
 

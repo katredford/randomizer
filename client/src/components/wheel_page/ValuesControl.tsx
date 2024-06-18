@@ -27,13 +27,13 @@ const ValuesControl: React.FC<ValuesControlProps> = (props) => {
     if (!props.wheel) {
         return <div>No wheel data available</div>;
     }
-    console.log("value control", props.wheel.Values[0].value)
+    // console.log("value control", props.wheel.Values[0].value)
     return (
         <>
             VALUE CONTROL
             {props.wheel?.Values.map((valObj) => {
 
-                { console.log(valObj.value) }
+                // { console.log(valObj.value) }
                 return <li key={valObj.id}>{valObj.value}</li>
             })}
         </>

@@ -1,3 +1,4 @@
+
 import { useState, useContext } from 'react';
 import {useWheel } from '../context/useWheel'
 
@@ -10,7 +11,7 @@ interface AddValueFormProps {
 }
 
 const AddValueForm: React.FC<AddValueFormProps> = ( {wheel_id, onValueAdded}) => {
-    const { addValue, getOneWheel } = useWheel();
+    const { addValue } = useWheel();
     const [inputValue, setInputValue] = useState<string>('')
 
 
