@@ -27,7 +27,7 @@ interface WheelContextType {
     addWheel: (input: string) => void
     addValue: (wheel_id: number, value: string) => void
     updateValue: (wheel_id: number, value_id: number, value: string) => void
-    deleteValue: (value_id: number, value: string) => void
+    deleteValue: (wheel_id: number, value_id: number) => Promise<void>;
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -38,7 +38,7 @@ export const WheelContext = createContext<WheelContextType>({
     addWheel: () => {},
     addValue: () => {},
     updateValue: () => {},
-    deleteValue: () => {}
+    deleteValue: async () => {}
 });
 
 
@@ -130,16 +130,16 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
     }, []);
 
-    // const deleteValue = useCallback(async (wheel_id: number, value_id: number, value: string) => {
-    //     try {
-    //         await axios.delete(`/api/data/updateVal/${wheel_id}/${value_id}`, { value }, {
-    //             headers: { 'Content-Type': 'application/json' },
-    //         });
-    //         console.log(value)
-    //     } catch (error) {
-    //         console.error("Error adding value:", error);
-    //     }
-    // }, []);
+    const deleteValue = useCallback(async (wheel_id: number, value_id: number) => {
+        try {
+            const response = await axios.delete(`/api/data/updateVal/${wheel_id}/${value_id}`, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            console.log("Deleted value successfully:", response.data);
+        } catch (error) {
+            console.error("Error deleting value:", error);
+        }
+    }, []);
 
 
 
@@ -158,7 +158,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         addWheel,
         addValue,
         updateValue,
-        // deleteValue
+        deleteValue
     }
 
     return (

@@ -6,7 +6,7 @@ import AddValueForm from './AddValueForm';
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel, updateValue } = useWheel(); // Destructure updateValue function from custom context
+    const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); // Destructure updateValue function from custom context
     const [refresh, setRefresh] = useState(0); // State to force re-render
 
     useEffect(() => {
@@ -34,6 +34,7 @@ const WheelControl: React.FC = () => {
                  wheel={oneWheel}
                  onUpdateValue={updateValue}
                  onValueChanged={refreshWheelData} // Ensure this prop is passed
+                 deleteValue={deleteValue}
              />
             ) : (
                 <div>No values found for this wheel.</div>
