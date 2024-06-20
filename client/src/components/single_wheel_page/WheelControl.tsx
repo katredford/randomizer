@@ -3,12 +3,15 @@ import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
-import Wheel from '../wheel/Wheel'
+
+import WheelComponent from '../wheel/WheelComponent';
+
+
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); // Destructure updateValue function from custom context
-    const [refresh, setRefresh] = useState(0); // State to force re-render
+    const [refresh, setRefresh] = useState(0); 
 
     useEffect(() => {
         getOneWheel(Number(id));
@@ -26,21 +29,27 @@ const WheelControl: React.FC = () => {
         return <div>Wheel not found</div>;
     }
 
+    const itemNames = oneWheel.Values.map(value => value.value);
+
+
     return (
         <>
             <h1>{oneWheel.title}</h1>
             <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData} />
             {oneWheel.Values && oneWheel.Values.length > 0 ? (
                 <>
-                 <ValuesControl
-                 wheel={oneWheel}
-                 onUpdateValue={updateValue}
-                 onValueChanged={refreshWheelData} // Ensure this prop is passed
-                 deleteValue={deleteValue}
-             />
-             
-             <Wheel />
-             </>
+                    <ValuesControl
+                        wheel={oneWheel}
+                        onUpdateValue={updateValue}
+                        onValueChanged={refreshWheelData}
+                        deleteValue={deleteValue}
+                    />
+
+                    <WheelComponent
+                        title={oneWheel.title}
+                        items={itemNames}
+                    />
+                </>
             ) : (
                 <div>No values found for this wheel.</div>
             )}
