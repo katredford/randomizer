@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
+import Wheel from '../wheel/Wheel'
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -30,12 +31,16 @@ const WheelControl: React.FC = () => {
             <h1>{oneWheel.title}</h1>
             <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData} />
             {oneWheel.Values && oneWheel.Values.length > 0 ? (
+                <>
                  <ValuesControl
                  wheel={oneWheel}
                  onUpdateValue={updateValue}
                  onValueChanged={refreshWheelData} // Ensure this prop is passed
                  deleteValue={deleteValue}
              />
+             
+             <Wheel />
+             </>
             ) : (
                 <div>No values found for this wheel.</div>
             )}
