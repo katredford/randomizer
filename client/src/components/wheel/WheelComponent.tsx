@@ -1,18 +1,27 @@
 
 //FC is functional component used to define in typescript
-import { FC } from 'react';
-
+import { FC, useEffect} from 'react';
+import { useParams } from 'react-router-dom';
+import { useWheel } from '../context/useWheel';
 import './wheel.css';
 
 
-//sets the types of the props the wheel component recieves
-interface WheelProps {
-    title: string;
-    items: string[];
-}
 
 //functional component that recievs title and items props from valuesControl
-const WheelComponent: FC<WheelProps> = ({ title, items }) => {
+    const WheelComponent: FC= () => {
+        const { id } = useParams<{ id: string }>();
+        const { oneWheel, loading, getOneWheel} = useWheel(); // Destructure updateValue function from custom context
+     
+
+        useEffect(() => {
+            if (id) {
+                getOneWheel(Number(id));
+                
+            }
+        }, [id, getOneWheel]);
+    
+    
+
     
     //radious of the wheel
     const radius: number = 200;
@@ -20,7 +29,6 @@ const WheelComponent: FC<WheelProps> = ({ title, items }) => {
     const strokeColor: string = 'black';
     //thickness of the lines
     const strokeWidth: number = 4;
-
     
     // function to generate the SVG path for a slice
     const generateSlicePath = (index: number, total: number): string => {
@@ -51,16 +59,26 @@ const WheelComponent: FC<WheelProps> = ({ title, items }) => {
         return `M ${radius},${radius} L ${startX},${startY} A ${radius},${radius} 0 ${largeArcFlag} 1 ${endX},${endY} Z`;
     };
 
+    
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!oneWheel) {
+        return <div>Wheel not found</div>;
+    }
+
     return (
         <>
-        <h1>{title}</h1>
+        <h1>{oneWheel?.title}</h1>
         {/* creates an SVG element with a width and height equal to 
         twice the radius (to accommodate the full circle).    */}
     <svg width={2 * radius} height={2 * radius}>
-            {items.map((_, i) => (
+            {oneWheel?.Values.map((_, i) => (
                 <path
                     key={i}
-                    d={generateSlicePath(i, items.length)}
+                    d={generateSlicePath(i, oneWheel.Values.length)}
                     fill="none"
                     stroke={strokeColor}
                     strokeWidth={strokeWidth}

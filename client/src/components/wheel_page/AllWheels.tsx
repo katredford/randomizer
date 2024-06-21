@@ -1,5 +1,5 @@
 // AllWheels.tsx
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import WheelCard from './WheelCard';
 import { WheelContext } from '../context/WheelContext';
 import WheelForm from "./WheelForm"

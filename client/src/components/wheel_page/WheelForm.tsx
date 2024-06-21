@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import axios from 'axios';
+
 import { WheelContext } from '../context/WheelContext';
 
 const WheelForm: React.FC = () => {
