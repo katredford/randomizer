@@ -263,12 +263,69 @@ RETURNING id, title, created_at, updated_at;
 	return c.JSON(&req)
 }
 
-func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
+// func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 
+// 	body := c.Body()
+// 	bodyString := string(body)
+// 	splitBody := strings.Split(bodyString, "\"")
+// 	fmt.Println("this thing working?", splitBody[3])
+
+// 	wheel_id := c.Params("wheelId")
+
+// 	rows, err := db.Query("SELECT id, wheel_id, value FROM wheel_values WHERE wheel_id = $1", wheel_id)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer rows.Close()
+
+// 	paramValId := c.Params("valId")
+	
+// 	number, err := strconv.ParseUint(paramValId, 10, 32)
+// 	value_id := int(number)
+	
+// 	// Loop over the query results
+// 	for rows.Next() {
+// 		var wv WheelValue
+
+// 		err := rows.Scan(&wv.ID, &wv.WheelID, &wv.Value)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+
+// 		// Print each result to the console
+// 		fmt.Printf("ID: %d, WheelID: %d, Value: %s\n", wv.ID, wv.WheelID, wv.Value)
+
+// 		if value_id == wv.ID {
+// 			newValue := splitBody[3]
+// 			_, err := db.Exec("UPDATE wheel_values SET value = $1 WHERE id = $2", newValue, wv.ID)
+// 			if err != nil {
+// 				log.Fatal(err)
+// 			}
+
+// 		}
+// 	}
+
+// 	// Check for errors after loop
+// 	if err = rows.Err(); err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	return c.JSON("values updated successfuly ")
+// }
+
+func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 	body := c.Body()
 	bodyString := string(body)
 	splitBody := strings.Split(bodyString, "\"")
-	fmt.Println("this thing working?", splitBody[3])
+
+	if len(splitBody) < 4 {
+		log.Println("Invalid input data:", bodyString)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid input data",
+		})
+	}
+
+	fmt.Println("splitBody:", splitBody)
 
 	wheel_id := c.Params("wheelId")
 
@@ -279,16 +336,17 @@ func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 	defer rows.Close()
 
 	paramValId := c.Params("valId")
-	
+
 	number, err := strconv.ParseUint(paramValId, 10, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
 	value_id := int(number)
-	
+
 	// Loop over the query results
 	for rows.Next() {
 		var wv WheelValue
 
-
-		
 		err := rows.Scan(&wv.ID, &wv.WheelID, &wv.Value)
 		if err != nil {
 			log.Fatal(err)
@@ -312,9 +370,30 @@ func UpdateWheelValue(c fiber.Ctx, db *sql.DB) error {
 		log.Fatal(err)
 	}
 
-	return c.JSON("values updated successfuly ")
+	return c.JSON("values updated successfully")
 }
 
+
+func DeleteWheelValue(c fiber.Ctx, db *sql.DB) error {
+	wheel_id := c.Params("wheelId")
+	paramValId := c.Params("valId")
+
+	fmt.Println("delete wheel paramWheelID:", wheel_id)
+
+	number, err := strconv.ParseUint(paramValId, 10, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	value_id := int(number)
+
+	// Execute the delete query
+	_, err = db.Exec("DELETE FROM wheel_values WHERE wheel_id = $1 AND id = $2", wheel_id, value_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return c.JSON("value deleted successfully")
+}
 
 
 

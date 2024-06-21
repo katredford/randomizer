@@ -38,8 +38,12 @@ func main() {
 		return api.UpdateWheelValue(c, db)
 	})
 	
-	app.Post("/api/data/updateVal/:wheelId/:valId", func(c fiber.Ctx) error {
+	app.Put("/api/data/updateVal/:wheelId/:valId", func(c fiber.Ctx) error {
 		return api.UpdateWheelValue(c, db)
+	})
+
+	app.Delete("/api/data/updateVal/:wheelId/:valId", func(c fiber.Ctx) error {
+		return api.DeleteWheelValue(c, db)
 	})
 
 	app.Post("/api/data", func(c fiber.Ctx) error {

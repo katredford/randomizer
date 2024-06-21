@@ -9,7 +9,7 @@ interface Wheel {
 
 const WheelCard: React.FC<Wheel> = (props) => {
     // const currentPage = useLocation().pathname;
-  console.log(props, "wheel card")
+  // console.log(props, "wheel card")
 
  
     return (

@@ -21,11 +21,12 @@ interface ValuesControlProps {
     onUpdateValue: (wheel_id: number, value_id: number, new_value: string) => void;
     //refresh page after value is changed
     onValueChanged: () => void;
+    deleteValue: (wheel_id: number, value_id: number) => void;
 }
 
 
 //recieves props from "WheelControl" component, wheel, onUpdateVale, onValueChanged
-const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onValueChanged }) => {
+const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onValueChanged, deleteValue }) => {
     //holds the value id
     const [editingValueId, setEditingValueId] = useState<number | null>(null);
     //holds edited value
@@ -57,6 +58,11 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
         //reset state
         setEditingValueId(null);
         setEditedValue('');
+    };
+
+    const handleDelete = (wheelId: number, valueId: number) => {
+        deleteValue(wheelId, valueId);
+        onValueChanged();
     };
 
     //checks if there is a wheel
@@ -91,6 +97,7 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
                             <>
                                 <span>{valObj.value}</span>
                                 <button onClick={() => handleEditStart(valObj.id, valObj.value)}>Edit</button>
+                                <button onClick={() => handleDelete(valObj.wheel_id, valObj.id)}>Delete</button>
                             </>
                         )}
                     </li>
