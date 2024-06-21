@@ -3,6 +3,7 @@ package main
 import (
 	// "fmt"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/logger"
 	_ "github.com/lib/pq"
 
 	"connection"
@@ -24,6 +25,17 @@ func main() {
 	defer db.Close()
 
 	app := fiber.New(fiber.Config{})
+
+	  // Middleware
+	  app.Use(logger.New())
+
+	  // Serve static files from the "dist" directory
+	  app.Static("/", "./client/dist")
+  
+	  // Catch-all route to serve the index.html file
+	  app.Get("/", func(c fiber.Ctx) error {
+		  return c.SendFile("./client/dist/index.html")
+	  })
 
 	// Define routes
 	app.Get("/api/data", func(c fiber.Ctx) error {

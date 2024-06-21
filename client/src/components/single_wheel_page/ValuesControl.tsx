@@ -1,6 +1,7 @@
 
 import React, { useState, ChangeEvent } from 'react';
 
+
 interface Value {
     id: number;
     value: string;
@@ -32,10 +33,12 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
     //holds edited value
     const [editedValue, setEditedValue] = useState<string>('');
 
+
     // changes states to the thing that got clicked on value and valueID
     const handleEditStart = (valueId: number, originalValue: string) => {
         setEditingValueId(valueId);
         setEditedValue(originalValue);
+       
     };
 
     //updates the edited value as user is typing
@@ -63,6 +66,7 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
     const handleDelete = (wheelId: number, valueId: number) => {
         deleteValue(wheelId, valueId);
         onValueChanged();
+       
     };
 
     //checks if there is a wheel

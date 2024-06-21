@@ -28,6 +28,7 @@ interface WheelContextType {
     addValue: (wheel_id: number, value: string) => void
     updateValue: (wheel_id: number, value_id: number, value: string) => void
     deleteValue: (wheel_id: number, value_id: number) => Promise<void>;
+    
 }
 
 export const WheelContext = createContext<WheelContextType>({
@@ -71,6 +72,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     //async means we can wait for the resolution of the promise with await
     const getOneWheel = useCallback(async (id: number) => {
         setLoading(true);
+        console.log("get one wheel")
         //try block will execute the code unless errors occur
         try {
             //axios is fetching the things at the api/data/:id endpoint
