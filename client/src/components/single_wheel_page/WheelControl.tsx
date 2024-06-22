@@ -10,7 +10,7 @@ import AddValueForm from './AddValueForm';
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); 
+    const { oneWheel, loading, getOneWheel, updateValue, deleteValue, triggerSpinAnimation } = useWheel(); 
     const [refresh, setRefresh] = useState(0);
 
 
@@ -30,7 +30,8 @@ const WheelControl: React.FC = () => {
         const newWindow = window.open(`/wheelComponent/${id}`, oneWheel.title, 'width=600,height=400');
         if (newWindow) {
           newWindow.onload = () => {
-            window.focus();
+            newWindow.postMessage({ type: 'click', spinAnimationTriggered: true }, '*');
+            window.focus()
           };
     
           // Listen for messages from the child window
@@ -73,7 +74,7 @@ const WheelControl: React.FC = () => {
                     />
 
                     <button autoFocus onClick={openWheelInNewWindow}>Open Wheel</button>
-                   
+                    <button onClick={triggerSpinAnimation}>Trigger Animation</button>
                 </>
             ) : (
                 <div>No values found for this wheel.</div>

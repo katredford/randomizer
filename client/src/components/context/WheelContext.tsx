@@ -28,7 +28,8 @@ interface WheelContextType {
     addValue: (wheel_id: number, value: string) => void
     updateValue: (wheel_id: number, value_id: number, value: string) => void
     deleteValue: (wheel_id: number, value_id: number) => Promise<void>;
-    spinWheel: boolean
+    triggerSpinAnimation: () => void;
+    spinAnimationTriggered: boolean;
 
 }
 
@@ -41,7 +42,8 @@ export const WheelContext = createContext<WheelContextType>({
     addValue: () => { },
     updateValue: () => { },
     deleteValue: async () => { },
-    spinWheel: true
+    triggerSpinAnimation: () => {},
+    spinAnimationTriggered: false,
 });
 
 
@@ -146,18 +148,17 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
     }, []);
 
-    const spinWheel = async () => {
-        console.log("spinnnnnnnn")
-        await setSpinAnimationTriggered(true)
+    const triggerSpinAnimation = useCallback(() => {
+        setSpinAnimationTriggered(true);
+        
+    }, []);
 
-
-    }
 
     useEffect(() => {
         getAllWheels();
     }, [getAllWheels]);
 
-
+    console.log("Wheel CONTEXT CONTEXT", spinAnimationTriggered)
 
     const values = {
         wheels,
@@ -168,7 +169,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         addValue,
         updateValue,
         deleteValue,
-        spinWheel
+        triggerSpinAnimation,
+        spinAnimationTriggered
     }
 
     return (

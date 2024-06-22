@@ -11,19 +11,17 @@ import './wheel.css';
 //functional component that recievs title and items props from valuesControl
 const WheelComponent: FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel, spinWheel } = useWheel(); // Destructure updateValue function from custom context
+    const { oneWheel, loading, getOneWheel, spinAnimationTriggered } = useWheel(); // Destructure updateValue function from custom context
     // const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
 
     useEffect(() => {
-        spinWheel;
         if (id) {
             getOneWheel(Number(id));
-
         }
     }, [id, getOneWheel]);
 
 
-
+console.log("Wheel Component", spinAnimationTriggered)
 
 
     //radious of the wheel
@@ -108,7 +106,8 @@ const WheelComponent: FC = () => {
             <h1>{oneWheel?.title}</h1>
             {/* creates an SVG element with a width and height equal to 
         twice the radius (to accommodate the full circle).    */}
-            <svg width={2 * radius} height={2 * radius} style={{ overflow: 'visible' }} className={spinWheel ? 'spin-animation' : ''}>
+            <svg width={2 * radius} height={2 * radius} style={{ overflow: 'visible' }} 
+            className={spinAnimationTriggered ? 'spin-animation' : ''}>
 
                 {oneWheel.Values.map((value, i) => {
                     const { x, y, angle } = calculateTextPosition(i, oneWheel.Values.length);
