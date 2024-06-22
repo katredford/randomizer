@@ -6,11 +6,13 @@ import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
 
 
+
+
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); // Destructure updateValue function from custom context
     const [refresh, setRefresh] = useState(0);
- 
+    const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
 
     useEffect(() => {
         getOneWheel(Number(id));
@@ -21,19 +23,36 @@ const WheelControl: React.FC = () => {
     }, []);
 
 
+    // const openWheelInNewWindow = () => {
+    //     if (!oneWheel) return;
+
+    //     const newWindow = window.open(`/wheelComponent/${id}`, oneWheel.title, 'width=600,height=400');
+    //     if (newWindow) {
+    //         newWindow.onload = () => {
+    //             newWindow.postMessage({ type: 'consoleLog' }, '*');
+    //         };
+    //     }
+    // };
+    
+    const triggerAnimation = () => {
+        setSpinAnimationTriggered(true);
+    }
+
     const openWheelInNewWindow = () => {
         if (!oneWheel) return;
-
+    
         const newWindow = window.open(`/wheelComponent/${id}`, oneWheel.title, 'width=600,height=400');
         if (newWindow) {
-            newWindow.onload = () => {
-                
-            };
+          newWindow.onload = () => {
+            newWindow.postMessage({ type: 'init', spinAnimationTriggered: spinAnimationTriggered }, '*');
+          };
+    
+          // Listen for messages from the child window
+          window.addEventListener('message', (event) => {
+            // Handle messages from child window, if needed
+          });
         }
-    };
-    
-    
-
+      };
 
 
     if (loading) {
@@ -72,6 +91,7 @@ const WheelControl: React.FC = () => {
                     />
 
                     <button onClick={openWheelInNewWindow}>Open Wheel</button>
+                     <button onClick={triggerAnimation}>Trigger Animation</button>
                 </>
             ) : (
                 <div>No values found for this wheel.</div>

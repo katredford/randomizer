@@ -28,6 +28,7 @@ interface WheelContextType {
     addValue: (wheel_id: number, value: string) => void
     updateValue: (wheel_id: number, value_id: number, value: string) => void
     deleteValue: (wheel_id: number, value_id: number) => Promise<void>;
+    spinWheel: boolean
     
 }
 
@@ -39,7 +40,8 @@ export const WheelContext = createContext<WheelContextType>({
     addWheel: () => {},
     addValue: () => {},
     updateValue: () => {},
-    deleteValue: async () => {}
+    deleteValue: async () => {},
+    spinWheel: true
 });
 
 
@@ -47,6 +49,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [wheels, setWheels] = useState<Wheel[]>([]);
     const [oneWheel, setOneWheel] = useState<Wheel | null>(null);
     const [loading, setLoading] = useState(false);
+    const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
     
 
     //useCallback is to memoize
@@ -143,8 +146,12 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
     }, []);
 
-
-
+    const spinWheel = async () => {
+        console.log("spinnnnnnnn")
+        await setSpinAnimationTriggered(true)
+        
+    
+}
 
     useEffect(() => {
         getAllWheels();
@@ -160,7 +167,8 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         addWheel,
         addValue,
         updateValue,
-        deleteValue
+        deleteValue,
+        spinWheel
     }
 
     return (
