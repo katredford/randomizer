@@ -1,6 +1,6 @@
 
 //FC is functional component used to define in typescript
-import { FC, useEffect} from 'react';
+import { FC, useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import './wheel.css';
@@ -10,8 +10,8 @@ import './wheel.css';
 //functional component that recievs title and items props from valuesControl
     const WheelComponent: FC= () => {
         const { id } = useParams<{ id: string }>();
-        const { oneWheel, loading, getOneWheel} = useWheel(); // Destructure updateValue function from custom context
-     
+        const { oneWheel, loading, getOneWheel, spinWheel} = useWheel(); // Destructure updateValue function from custom context
+        // const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
 
         useEffect(() => {
             if (id) {
@@ -19,8 +19,23 @@ import './wheel.css';
                 
             }
         }, [id, getOneWheel]);
-    
-    
+
+
+        useEffect(() => {
+            const handleMessage = (event: MessageEvent) => {
+              const { type, spinAnimationTriggered: triggered } = event.data;
+        
+              if (type === 'click') {
+                spinWheel();
+              }
+            };
+        
+            window.addEventListener('message', handleMessage);
+        
+            // return () => {
+            //   window.removeEventListener('message', handleMessage);
+            // };
+          }, []);
 
     
     //radious of the wheel
@@ -74,7 +89,9 @@ import './wheel.css';
         <h1>{oneWheel?.title}</h1>
         {/* creates an SVG element with a width and height equal to 
         twice the radius (to accommodate the full circle).    */}
-    <svg width={2 * radius} height={2 * radius}>
+    <svg width={2 * radius} height={2 * radius}
+    className={spinWheel ? 'spin-animation' : ''}
+    >
             {oneWheel?.Values.map((_, i) => (
                 <path
                     key={i}

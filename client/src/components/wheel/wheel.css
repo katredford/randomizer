@@ -7,4 +7,20 @@
 
 
 
-  
+  /* Define the CSS animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Apply the animation to the SVG element when triggered */
+.spin-animation {
+    animation-name: spin;
+    animation-duration: 3s; /* Adjust duration as needed */
+    animation-timing-function: ease-in-out; /* Adjust timing function as needed */
+    animation-iteration-count: 1; /* Run the animation once */
+}
