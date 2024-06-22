@@ -37,7 +37,7 @@ CREATE TABLE wheel (
 -- Create the employee table
 CREATE TABLE wheel_values (
   id SERIAL PRIMARY KEY,
-  value VARCHAR(30) NOT NULL,
+  value VARCHAR(255) NOT NULL,
   wheel_id INTEGER NOT NULL,
   FOREIGN KEY (wheel_id) REFERENCES wheel(id) ON DELETE CASCADE
 );
