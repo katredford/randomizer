@@ -10,9 +10,9 @@ import AddValueForm from './AddValueForm';
 
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); // Destructure updateValue function from custom context
+    const { oneWheel, loading, getOneWheel, updateValue, deleteValue } = useWheel(); 
     const [refresh, setRefresh] = useState(0);
-    const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
+
 
     useEffect(() => {
         getOneWheel(Number(id));
@@ -22,21 +22,7 @@ const WheelControl: React.FC = () => {
         setRefresh(prev => prev + 1);
     }, []);
 
-
-    // const openWheelInNewWindow = () => {
-    //     if (!oneWheel) return;
-
-    //     const newWindow = window.open(`/wheelComponent/${id}`, oneWheel.title, 'width=600,height=400');
-    //     if (newWindow) {
-    //         newWindow.onload = () => {
-    //             newWindow.postMessage({ type: 'consoleLog' }, '*');
-    //         };
-    //     }
-    // };
-    
-    const triggerAnimation = () => {
-        setSpinAnimationTriggered(true);
-    }
+  
 
     const openWheelInNewWindow = () => {
         if (!oneWheel) return;
@@ -44,12 +30,13 @@ const WheelControl: React.FC = () => {
         const newWindow = window.open(`/wheelComponent/${id}`, oneWheel.title, 'width=600,height=400');
         if (newWindow) {
           newWindow.onload = () => {
-            newWindow.postMessage({ type: 'init', spinAnimationTriggered: spinAnimationTriggered }, '*');
+            window.focus();
           };
     
           // Listen for messages from the child window
           window.addEventListener('message', (event) => {
             // Handle messages from child window, if needed
+            window.focus();
           });
         }
       };
@@ -72,12 +59,7 @@ const WheelControl: React.FC = () => {
             <AddValueForm wheel_id={Number(id)} onValueAdded={refreshWheelData} />
             {oneWheel.Values && oneWheel.Values.length > 0 ? (
                 <>
-                    {/* <ValuesControl
-                        wheel={oneWheel}
-                        onUpdateValue={updateValue}
-                        onValueChanged={refreshWheelData}
-                        deleteValue={deleteValue}
-                    /> */}
+              
                         <ValuesControl
                         wheel={oneWheel}
                         onUpdateValue={(wheelId, valueId, value) => {
@@ -90,8 +72,8 @@ const WheelControl: React.FC = () => {
                         }}
                     />
 
-                    <button onClick={openWheelInNewWindow}>Open Wheel</button>
-                     <button onClick={triggerAnimation}>Trigger Animation</button>
+                    <button autoFocus onClick={openWheelInNewWindow}>Open Wheel</button>
+                   
                 </>
             ) : (
                 <div>No values found for this wheel.</div>
