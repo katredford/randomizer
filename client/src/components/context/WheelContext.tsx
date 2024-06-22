@@ -29,18 +29,18 @@ interface WheelContextType {
     updateValue: (wheel_id: number, value_id: number, value: string) => void
     deleteValue: (wheel_id: number, value_id: number) => Promise<void>;
     spinWheel: boolean
-    
+
 }
 
 export const WheelContext = createContext<WheelContextType>({
     wheels: [],
     loading: true,
     oneWheel: null,
-    getOneWheel: () => {},
-    addWheel: () => {},
-    addValue: () => {},
-    updateValue: () => {},
-    deleteValue: async () => {},
+    getOneWheel: () => { },
+    addWheel: () => { },
+    addValue: () => { },
+    updateValue: () => { },
+    deleteValue: async () => { },
     spinWheel: true
 });
 
@@ -50,7 +50,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [oneWheel, setOneWheel] = useState<Wheel | null>(null);
     const [loading, setLoading] = useState(false);
     const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
-    
+
 
     //useCallback is to memoize
     // memoization is the process of caching the result of a function call and 
@@ -95,16 +95,16 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, []);
 
 
-    const addWheel = useCallback(async (inputValue: string) =>{
-        try{
+    const addWheel = useCallback(async (inputValue: string) => {
+        try {
             //await is used to wait for the request to complete and get the response object
             const response = await axios.post<Wheel>('/api/data', {
                 title: inputValue,
             });
 
             //creatges a new wheel object, and inicialises "Values" property as empty array
-            const newWheel = { ...response.data, Values: []};
-            setWheels(prevWheels => [ ...prevWheels, newWheel]);
+            const newWheel = { ...response.data, Values: [] };
+            setWheels(prevWheels => [...prevWheels, newWheel]);
         } catch (error) {
             console.error('there is an error adding the wheel title')
         }
@@ -149,20 +149,20 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const spinWheel = async () => {
         console.log("spinnnnnnnn")
         await setSpinAnimationTriggered(true)
-        
-    
-}
+
+
+    }
 
     useEffect(() => {
         getAllWheels();
     }, [getAllWheels]);
 
-  
+
 
     const values = {
-        wheels, 
-        oneWheel, 
-        loading, 
+        wheels,
+        oneWheel,
+        loading,
         getOneWheel,
         addWheel,
         addValue,
