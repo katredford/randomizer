@@ -20,6 +20,17 @@ const WheelComponent: FC = () => {
         }
     }, [id, getOneWheel]);
 
+    useEffect(() => {
+        if (spinAnimationTriggered) {
+            // Trigger the spin animation
+            console.log("Spin animation triggered!");
+            // Add any additional logic for when the animation is triggered
+            setTimeout(() => setSpinAnimationTriggered(false), 1000);
+
+           
+        }
+    }, [spinAnimationTriggered]);
+
 
 console.log("Wheel Component", spinAnimationTriggered)
 
