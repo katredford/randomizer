@@ -2,37 +2,20 @@
 
 //FC is functional component used to define in typescript
 import { FC, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import './wheel.css';
 
 
 
+
+
 //functional component that recievs title and items props from valuesControl
 const WheelComponent: FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, getOneWheel, spinAnimationTriggered } = useWheel(); // Destructure updateValue function from custom context
-    // const [spinAnimationTriggered, setSpinAnimationTriggered] = useState(false);
+    // const { id } = useParams<{ id: string }>();
+    const { oneWheel, loading, spinAnimationTriggered } = useWheel();
 
-    useEffect(() => {
-        if (id) {
-            getOneWheel(Number(id));
-        }
-    }, [id, getOneWheel]);
-
-    useEffect(() => {
-        if (spinAnimationTriggered) {
-            // Trigger the spin animation
-            console.log("Spin animation triggered!");
-            // Add any additional logic for when the animation is triggered
-            setTimeout(() => setSpinAnimationTriggered(false), 1000);
-
-           
-        }
-    }, [spinAnimationTriggered]);
-
-
-console.log("Wheel Component", spinAnimationTriggered)
+    console.log("Wheel Component: spinAnimationTriggered", spinAnimationTriggered)
 
 
     //radious of the wheel
@@ -116,9 +99,9 @@ console.log("Wheel Component", spinAnimationTriggered)
         <>
             <h1>{oneWheel?.title}</h1>
             {/* creates an SVG element with a width and height equal to 
-        twice the radius (to accommodate the full circle).    */}
-            <svg width={2 * radius} height={2 * radius} style={{ overflow: 'visible' }} 
-            className={spinAnimationTriggered ? 'spin-animation' : ''}>
+            twice the radius (to accommodate the full circle).    */}
+            <svg width={2 * radius} height={2 * radius} style={{ overflow: 'visible' }}
+                className={spinAnimationTriggered ? 'spin-animation' : ''}>
 
                 {oneWheel.Values.map((value, i) => {
                     const { x, y, angle } = calculateTextPosition(i, oneWheel.Values.length);

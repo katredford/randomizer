@@ -150,19 +150,10 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const triggerSpinAnimation = useCallback(() => {
         setSpinAnimationTriggered(true);
-       
-        // console.log("booooop ")
-        // const event = new CustomEvent('spinAnimationTriggered');
-        // window.dispatchEvent(event);
+        setTimeout(() => setSpinAnimationTriggered(false), 5000);
     }, []);
 
-    useEffect(() => {
-     
-       if(spinAnimationTriggered){
-           console.log("Wheel CONTEXT CONTEXT", spinAnimationTriggered)
-        triggerSpinAnimation()
-       }
-    }, [spinAnimationTriggered]);
+
 
     useEffect(() => {
         getAllWheels();
