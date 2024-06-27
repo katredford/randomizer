@@ -1,7 +1,7 @@
 
 
 //FC is functional component used to define in typescript
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 // import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
 import './wheel.css';
@@ -13,9 +13,24 @@ import './wheel.css';
 //functional component that recievs title and items props from valuesControl
 const WheelComponent: FC = () => {
     // const { id } = useParams<{ id: string }>();
-    const { oneWheel, loading, spinAnimationTriggered } = useWheel();
+    const { oneWheel, loading} = useWheel();
+    const requestRef = useRef<number>(0);
 
-    console.log("Wheel Component: spinAnimationTriggered", spinAnimationTriggered)
+    const animate = () => {
+        requestRef.current = requestAnimationFrame(animate);
+        // Your animation logic here if needed
+    };
+
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, []);
+
+    // const handleSpinClick = () => {
+    //     triggerSpinAnimation(); // Call context function to start spin animation
+    // };
+
+    // console.log("Wheel Component: spinAnimationTriggered", spinAnimationTriggered)
 
 
     //radious of the wheel
@@ -58,7 +73,7 @@ const WheelComponent: FC = () => {
     const calculateTextPosition = (index: number, total: number): { x: number, y: number, angle: number } => {
         const angle = (2 * Math.PI) / total;
         const midAngle = index * angle + angle / 2;
-        const textRadius = radius * .8;
+        const textRadius = radius * 0.8;
         const x = radius + textRadius * Math.cos(midAngle);
         const y = radius + textRadius * Math.sin(midAngle);
         const rotation = (midAngle * 180) / Math.PI - 90;
@@ -95,13 +110,35 @@ const WheelComponent: FC = () => {
     };
 
 
+
+    // const animate = (time: number) => {
+    //     const currentTime = performance.now();
+    //     if (spin) {
+    //         const newWheelPos = wheelPosFunction(currentTime, startTime, endTime, wheelPos, endPos);
+    //         setWheelPos(newWheelPos);
+    //         if (currentTime >= endTime) {
+    //             setIsSpinning(false);
+    //             setSpeed(0);
+    //         }
+    //     } else {
+    //         setSpeed(speed * 0.95);
+    //         setWheelPos(wheelPos + speed);
+    //     }
+
+    //     requestRef.current = requestAnimationFrame(animate);
+    // };
+
+
     return (
         <>
             <h1>{oneWheel?.title}</h1>
             {/* creates an SVG element with a width and height equal to 
             twice the radius (to accommodate the full circle).    */}
-            <svg width={2 * radius} height={2 * radius} style={{ overflow: 'visible' }}
-                className={spinAnimationTriggered ? 'spin-animation' : ''}>
+            <svg width={2 * radius} height={2 * radius} 
+            style={{ overflow: 'visible' }}
+            //     className={spinAnimationTriggered ? 'spin-animation' : ''}
+                
+                >
 
                 {oneWheel.Values.map((value, i) => {
                     const { x, y, angle } = calculateTextPosition(i, oneWheel.Values.length);

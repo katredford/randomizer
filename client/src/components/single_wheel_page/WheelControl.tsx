@@ -6,6 +6,7 @@ import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
 import PortalContainer from './PortalContainer';
 import WheelComponent from '../wheel/WheelComponent';
+import TestWheelComponent from '../wheel/TestWheelComponent';
 
 
 const WheelControl: React.FC = () => {
@@ -69,7 +70,7 @@ const WheelControl: React.FC = () => {
                     <WheelComponent />
                 </PortalContainer>
             )}
-
+        <TestWheelComponent />
         </>
     );
 };
