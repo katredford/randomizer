@@ -2,7 +2,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 // import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
-// import './wheel.css';
+import './wheel.css';
 
 
 
