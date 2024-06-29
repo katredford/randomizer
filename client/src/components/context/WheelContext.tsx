@@ -150,7 +150,7 @@ export const WheelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const triggerSpinAnimation = useCallback(() => {
         setSpinAnimationTriggered(true);
-        setTimeout(() => setSpinAnimationTriggered(false), 5000);
+        setTimeout(() => setSpinAnimationTriggered(false), 1000);
     }, []);
 
 
