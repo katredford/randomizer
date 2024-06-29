@@ -8,6 +8,7 @@ import PortalContainer from './PortalContainer';
 import WheelComponent from '../wheel/WheelComponent';
 
 
+
 const WheelControl: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { oneWheel, loading, getOneWheel, updateValue, deleteValue, triggerSpinAnimation } = useWheel();
@@ -69,7 +70,7 @@ const WheelControl: React.FC = () => {
                     <WheelComponent />
                 </PortalContainer>
             )}
-
+      
         </>
     );
 };
