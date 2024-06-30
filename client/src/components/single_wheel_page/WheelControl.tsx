@@ -6,7 +6,10 @@ import ValuesControl from './ValuesControl';
 import AddValueForm from './AddValueForm';
 import PortalContainer from './PortalContainer';
 import WheelComponent from '../wheel/WheelComponent';
-
+import { Toaster } from 'react-hot-toast'
+import { SiStarship } from 'react-icons/si'
+import { motion } from 'framer-motion'
+import { ValueItem } from '../ValueItem'
 
 
 const WheelControl: React.FC = () => {
@@ -57,11 +60,19 @@ const WheelControl: React.FC = () => {
                         }}
                     />
 
-                    <button autoFocus onClick={triggerSpinAnimation}>Trigger Animation</button>
+                    <button onClick={triggerSpinAnimation}>Trigger Animation</button>
                 </>
             ) : (
-                <div>No values found for this wheel.</div>
-            )}
+
+                <div className="max-w-lg px-5 m-auto">
+                    <h1 className="flex flex-col items-center gap-5 px-5 py-10 text-xl font-bold text-center rounded-xl bg-zinc-900">
+                        <SiStarship className="text-5xl" />
+                        add values to  your wheel
+                    </h1>
+                </div>
+            )
+            }
+
 
             <button onClick={handleOpenPortal}>Open Portal</button>
             <button onClick={handleClosePortal}>Close Portal</button>
@@ -70,7 +81,7 @@ const WheelControl: React.FC = () => {
                     <WheelComponent />
                 </PortalContainer>
             )}
-      
+
         </>
     );
 };
