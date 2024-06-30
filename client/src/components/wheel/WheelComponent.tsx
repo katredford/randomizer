@@ -2,7 +2,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 // import { useParams } from 'react-router-dom';
 import { useWheel } from '../context/useWheel';
-import './wheel.css';
+// import './wheel.css';
 
 const WheelComponent: FC = () => {
     const { oneWheel, loading, spinAnimationTriggered } = useWheel();
@@ -119,7 +119,10 @@ const WheelComponent: FC = () => {
         const randomSlice = Math.floor(Math.random() * slices);
         const randomSliceCenter = randomSlice * sliceAngle + sliceAngle / 2;
 
+        //important variable needed to calculate where the next spin should end so 
+        //the next slice is centered at 0 degrees
         const currentWheelRotation = wheelPos % (2 * Math.PI);
+        
         const newEndPos = wheelPos + minSpins - currentWheelRotation + randomSliceCenter;
         setEndPos(newEndPos);
     };

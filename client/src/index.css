@@ -13,3 +13,17 @@
   -moz-osx-font-smoothing: grayscale;
 } */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .bg-dark-900 {
+    background-color: #1a1a1a; /* or your desired color */
+  }
+}
+
+body {
+  @apply text-slate-200 bg-dark-900;
+}
+

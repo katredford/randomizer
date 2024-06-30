@@ -1,5 +1,14 @@
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+
+import { motion } from 'framer-motion'
+
+import { Input } from '../Input'
+
+import { FaRegEdit } from 'react-icons/fa'
+import { RiDeleteBin7Line } from 'react-icons/ri'
+import { toast } from 'react-hot-toast'
+import cn from 'classnames'
 
 
 interface Value {
@@ -32,41 +41,48 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
     const [editingValueId, setEditingValueId] = useState<number | null>(null);
     //holds edited value
     const [editedValue, setEditedValue] = useState<string>('');
+    console.log(wheel)
+    const editInputRef = useRef<HTMLInputElement>(null)
 
+
+
+    useEffect(() => {
+        if (editingValueId !== null && editInputRef.current) {
+            editInputRef.current.focus()
+        }
+    }, [editingValueId])
 
     // changes states to the thing that got clicked on value and valueID
     const handleEditStart = (valueId: number, originalValue: string) => {
         setEditingValueId(valueId);
         setEditedValue(originalValue);
-       
+
+        if (editInputRef.current) {
+            editInputRef.current.focus()
+        }
+
     };
 
-    //updates the edited value as user is typing
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setEditedValue(e.target.value);
-    };
+    const handleUpdate = (valueId: number, wheelId: number) => {
+        if (editedValue.trim() !== '') {
+            onUpdateValue(wheelId, valueId, editedValue)
+            onValueChanged();
 
-    //clears editingvalue when clicked
-    const handleEditCancel = () => {
-        setEditingValueId(null);
-        setEditedValue('');
-    };
+            //reset state
+            setEditingValueId(null);
+            setEditedValue('');
+            toast.success('Todo updated successfully!')
+        } else {
+            toast.error('Todo field cannot be empty!')
+        }
+    }
 
-    const handleEditSave = (valueId: number, wheelId: number) => {
-        // calls onUpdateValue function passes the valueid wheelid and edited value
-        onUpdateValue(wheelId, valueId, editedValue);
-        //trigger refresh since value was changed
-        onValueChanged();
-
-        //reset state
-        setEditingValueId(null);
-        setEditedValue('');
-    };
 
     const handleDelete = (wheelId: number, valueId: number) => {
         deleteValue(wheelId, valueId);
         onValueChanged();
-       
+        toast.success('Todo deleted successfully!')
+
     };
 
     //checks if there is a wheel
@@ -80,33 +96,72 @@ const ValuesControl: React.FC<ValuesControlProps> = ({ wheel, onUpdateValue, onV
     return (
         <>
             <h2>Value Control</h2>
-            <ul>
+            <motion.ul className="grid max-w-lg gap-2 px-5 m-auto">
                 {/* map over sorted values */}
                 {sortedValues.map((valObj) => (
                     // for each valObj create an li
-                    <li key={valObj.id}>
-                        {/* if editing display an input */}
+                    <motion.li
+                        className={cn(
+                            'p-5 rounded-xl bg-zinc-900'
+                        )}
+                        key={valObj.id}
+                    >
                         {editingValueId === valObj.id ? (
-                            <>
-                                <input
+                            <motion.div
+                                layout
+                                key={valObj.id}
+                                className="flex gap-2">
+
+                                <Input
+                                    ref={editInputRef}
                                     type="text"
                                     value={editedValue}
-                                    onChange={handleInputChange}
+                                    onChange={e => setEditedValue(e.target.value)}
                                 />
-                                <button onClick={() => handleEditSave(valObj.id, valObj.wheel_id)}>Save</button>
-                                <button onClick={handleEditCancel}>Cancel</button>
-                            </>
+
+                                <button
+                                    className="px-5 py-2 text-sm font-normal text-orange-300 bg-orange-900 border-2 border-orange-900 active:scale-95 rounded-xl"
+                                    onClick={() => handleUpdate(valObj.id, valObj.wheel_id)}
+                                >
+                                    Save
+                                </button>
+                            </motion.div>
+
+
                         ) : (
-                            // if not editing display the value in a span
-                            <>
-                                <span>{valObj.value}</span>
-                                <button onClick={() => handleEditStart(valObj.id, valObj.value)}>Edit</button>
-                                <button onClick={() => handleDelete(valObj.wheel_id, valObj.id)}>Delete</button>
-                            </>
+
+
+                            <div className="flex flex-col gap-5">
+                                <motion.span
+                                    layout
+                                >
+                                    <span>{valObj.value}</span>
+                                </motion.span>
+                                <div className="flex justify-between gap-5 text-white">
+
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleEditStart(valObj.id, valObj.value)}
+                                            className="flex items-center gap-1 "
+                                        >
+                                            <FaRegEdit />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(valObj.wheel_id, valObj.id)}
+                                            className="flex items-center gap-1 text-red-500"
+                                        >
+                                            <RiDeleteBin7Line />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         )}
-                    </li>
+                    </motion.li>
                 ))}
-            </ul>
+            </motion.ul>
         </>
     );
 };
